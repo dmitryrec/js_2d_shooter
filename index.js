@@ -3,7 +3,9 @@ ctx.font = '30px Arial';
 
 let HEIGHT = 500;
 let WIDTH = 500;
-let timeWhenGameStarted = Date.now();   
+let timeWhenGameStarted = Date.now();
+
+let frameCount = 0;
 
 let player = {
     x: 50,
@@ -20,7 +22,7 @@ let player = {
 let enemyList = {};
 
 
-let getDistanceBetweenEntity = function (entity1, entity2) {  
+let getDistanceBetweenEntity = function (entity1, entity2) {
     let vx = entity1.x - entity2.x;
     let vy = entity1.y - entity2.y;
     return Math.sqrt(vx * vx + vy * vy);
@@ -33,7 +35,7 @@ let testCollisionRectRect = function (rect1, rect2) {
         && rect2.y <= rect1.y + rect1.height;
 };
 
-let testCollisionEntity = function (entity1, entity2) {      
+let testCollisionEntity = function (entity1, entity2) {
     let rect1 = {
         x: entity1.x - entity1.width / 2,
         y: entity1.y - entity1.height / 2,
@@ -67,18 +69,22 @@ let Enemy = function (id, x, y, spdX, spdY, width, height) {
 };
 
 document.onmousemove = function (mouse) {
-    let mouseX = mouse.clientX;
-    let mouseY = mouse.clientY;
+    let mouseX = mouse.clientX - document.getElementById('ctx').getBoundingClientRect().left;
+    let mouseY = mouse.clientY - document.getElementById('ctx').getBoundingClientRect().top;
+
+    if (mouseX < player.width / 2)
+        mouseX = player.width / 2;
+    if (mouseX > WIDTH - player.width / 2)
+        mouseX = WIDTH - player.width / 2;
+    if (mouseY < player.height / 2)
+        mouseY = player.height / 2;
+    if (mouseY > HEIGHT - player.height / 2)
+        mouseY = HEIGHT - player.height / 2;
 
     player.x = mouseX;
     player.y = mouseY;
 };
 
-
-let updateEntity = function (something) {
-    updateEntityPosition(something);
-    drawEntity(something);
-};
 
 let updateEntityPosition = function (something) {
     something.x += something.spdX;
@@ -100,13 +106,41 @@ let drawEntity = function (something) {
     ctx.restore();
 };
 
-Enemy('E1', 150, 350, 10, 15, 30, 30);
-Enemy('E2', 250, 350, 10, -15, 20, 20);
-Enemy('E3', 250, 150, 10, -8, 40, 10);
 
+let updateEntity = function (something) {
+    updateEntityPosition(something);
+    drawEntity(something);
+};
+
+
+let randomGenerateEnemy = function () {
+    let x = Math.random() * WIDTH;
+    let y = Math.random() * HEIGHT;
+    let height = 10 + Math.random() * 30;
+    let width = 10 + Math.random() * 30;
+    let id = Math.random();
+    let spdX = 5 + Math.random() * 5;
+    let spdY = 5 + Math.random() * 5;
+    Enemy(id, x, y, spdX, spdY, width, height)
+};
+
+let startNewGame = function () {
+    player.hp = 10;
+    timeWhenGameStarted = Date.now();
+    frameCount = 0;
+    enemyList = {};
+    randomGenerateEnemy();
+    randomGenerateEnemy();
+    randomGenerateEnemy();
+};
 
 let update = function () {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
+
+    frameCount++;
+    if (frameCount % 100 === 0) {
+        randomGenerateEnemy()
+    };
 
     for (let key in enemyList) {
         updateEntity(enemyList[key]);
@@ -114,19 +148,19 @@ let update = function () {
         let isColliding = testCollisionEntity(player, enemyList[key]);
         if (isColliding) {
             player.hp = player.hp - 1;
-            if (player.hp <= 0) {
-                let timeSurvived = Date.now() - timeWhenGameStarted;
 
-                console.log("You lost! You survived for " + timeSurvived/1000 + " sec.");
-                timeWhenGameStarted = Date.now();
-                player.hp = 10;
-            }
         }
 
+    };
+    if (player.hp <= 0) {
+        let timeSurvived = Date.now() - timeWhenGameStarted;
+        console.log("You lost! You survived for " + timeSurvived / 1000 + " sec.");
+        startNewGame();
     }
-
     drawEntity(player);
     ctx.fillText(player.hp + " Hp", 0, 30);
 };
+
+startNewGame();
 
 setInterval(update, 40);
