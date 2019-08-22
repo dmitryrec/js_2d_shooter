@@ -75,6 +75,8 @@ let Enemy = function (id, x, y, spdX, spdY, width, height) {
         width: width,
         height: height,
         color: 'red',
+
+        aimAngle: 0,
     };
     enemyList[id] = enemy3;
 
@@ -134,20 +136,23 @@ let Bullet = function (id, x, y, spdX, spdY, width, height) {
 
 };
 
-let randomGenerateBullet = function () {
-    let x = player.x;
-    let y = player.y;
+let randomGenerateBullet = function (actor, overwriteAngle) {
+    let x = actor.x;
+    let y = actor.y;
     let height = 10;
     let width = 10;
     let id = Math.random();
 
-    let angle = player.aimAngle;
+    let angle = actor.aimAngle;
+    if (overwriteAngle !== undefined) {
+        angle = overwriteAngle;
+    }
     let spdX = Math.cos(angle / 180 * Math.PI) * 5;
     let spdY = Math.sin(angle / 180 * Math.PI) * 5;
     Bullet(id, x, y, spdX, spdY, width, height)
 };
 
-document.onmousemove = function(mouse) {
+document.onmousemove = function (mouse) {
     var mouseX = mouse.clientX - document.getElementById('ctx').getBoundingClientRect().left;
     var mouseY = mouse.clientY - document.getElementById('ctx').getBoundingClientRect().top;
 
@@ -245,11 +250,21 @@ let startNewGame = function () {
     randomGenerateEnemy();
 };
 
-document.onclick = function () {
+document.onclick = function (mouse) {
     if (player.attackCounter > 25) {
-        randomGenerateBullet();
+        randomGenerateBullet(player);
         player.attackCounter = 0;
     };
+};
+
+document.oncontextmenu = function (e) {
+    if (player.attackCounter > 50) {
+        for (var angle = 0; angle < 360; angle++) {
+            randomGenerateBullet(player, angle)
+        }
+        player.attackCounter = 0;
+    };
+    e.preventDefault();
 };
 
 let update = function () {
