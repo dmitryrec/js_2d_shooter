@@ -7,6 +7,8 @@ let timeWhenGameStarted = Date.now();
 
 let frameCount = 0;
 
+let score = 0;
+
 let player = {
     x: 50,
     spdX: 30,
@@ -20,7 +22,7 @@ let player = {
 };
 
 let enemyList = {};
-
+let upgradeList = {};
 
 let getDistanceBetweenEntity = function (entity1, entity2) {
     let vx = entity1.x - entity2.x;
@@ -66,6 +68,33 @@ let Enemy = function (id, x, y, spdX, spdY, width, height) {
     };
     enemyList[id] = enemy3;
 
+};
+
+let Upgrade = function (id, x, y, spdX, spdY, width, height) {
+    let upgrade = {
+        x: x,
+        spdX: spdX,
+        y: y,
+        spdY: spdY,
+        name: 'E',
+        id: id,
+        width: width,
+        height: height,
+        color: 'orange',
+    };
+    upgradeList[id] = upgrade;
+
+};
+
+let randomGenerateUpgrade = function () {
+    let x = Math.random() * WIDTH;
+    let y = Math.random() * HEIGHT;
+    let height = 10;
+    let width = 10;
+    let id = Math.random();
+    let spdX = 0;
+    let spdY = 0;
+    Upgrade(id, x, y, spdX, spdY, width, height)
 };
 
 document.onmousemove = function (mouse) {
@@ -128,7 +157,9 @@ let startNewGame = function () {
     player.hp = 10;
     timeWhenGameStarted = Date.now();
     frameCount = 0;
+    score = 0;
     enemyList = {};
+    upgradeList = {};
     randomGenerateEnemy();
     randomGenerateEnemy();
     randomGenerateEnemy();
@@ -136,10 +167,24 @@ let startNewGame = function () {
 
 let update = function () {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
-
     frameCount++;
+    score++;
+
     if (frameCount % 100 === 0) {
         randomGenerateEnemy()
+    };
+
+    if (frameCount % 75 === 0) {
+        randomGenerateUpgrade();
+    };
+
+    for (let key in upgradeList) {
+        updateEntity(upgradeList[key]);
+        let isColliding = testCollisionEntity(player, upgradeList[key]);
+        if (isColliding) {
+            score += 1000;
+            delete upgradeList[key];
+        }
     };
 
     for (let key in enemyList) {
@@ -159,6 +204,7 @@ let update = function () {
     }
     drawEntity(player);
     ctx.fillText(player.hp + " Hp", 0, 30);
+    ctx.fillText('scores: ' + score, 200, 30);
 };
 
 startNewGame();
