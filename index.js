@@ -109,6 +109,7 @@ let Bullet = function (id, x, y, spdX, spdY, width, height) {
         width: width,
         height: height,
         color: 'black',
+        timer: 0,
     };
     bulletList[id] = bullet;
 
@@ -216,13 +217,22 @@ let update = function () {
     for (let key in bulletList) {
         updateEntity(bulletList[key]);
 
+        let toRemove = false;
+        bulletList[key].timer++;
+        if(bulletList[key].timer > 100) {
+            toRemove=true;
+        }
+
         for (let key2 in enemyList) {
             let isColliding = testCollisionEntity(bulletList[key], enemyList[key2]);
             if (isColliding) {
-                delete bulletList[key];
+                toRemove=true;
                 delete enemyList[key2];
                 break;
             }
+        }
+        if(toRemove){
+            delete bulletList[key];
         }
     };
 
