@@ -121,9 +121,9 @@ let randomGenerateBullet = function () {
     let width = 10;
     let id = Math.random();
 
-    let angle = Math.random()*360;
-    let spdX = Math.cos(angle/180*Math.PI)*5;
-    let spdY = Math.sin(angle/180*Math.PI)*5;
+    let angle = Math.random() * 360;
+    let spdX = Math.cos(angle / 180 * Math.PI) * 5;
+    let spdY = Math.sin(angle / 180 * Math.PI) * 5;
     Bullet(id, x, y, spdX, spdY, width, height)
 };
 
@@ -190,6 +190,7 @@ let startNewGame = function () {
     score = 0;
     enemyList = {};
     upgradeList = {};
+    bulletList = {};
     randomGenerateEnemy();
     randomGenerateEnemy();
     randomGenerateEnemy();
@@ -214,7 +215,16 @@ let update = function () {
 
     for (let key in bulletList) {
         updateEntity(bulletList[key]);
-    }
+
+        for (let key2 in enemyList) {
+            let isColliding = testCollisionEntity(bulletList[key], enemyList[key2]);
+            if (isColliding) {
+                delete bulletList[key];
+                delete enemyList[key2];
+                break;
+            }
+        }
+    };
 
     for (let key in upgradeList) {
         updateEntity(upgradeList[key]);
