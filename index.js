@@ -19,8 +19,13 @@ let player = {
     width: 20,
     height: 20,
     color: 'green',
-    atkSpd:1,
-    attackCounter:0,
+    atkSpd: 1,
+    attackCounter: 0,
+
+    pressingDown: false,
+    pressingUp: false,
+    pressingLeft: false,
+    pressingRight: false,
 };
 
 let enemyList = {};
@@ -73,7 +78,7 @@ let Enemy = function (id, x, y, spdX, spdY, width, height) {
 
 };
 
-let Upgrade = function (id, x, y, spdX, spdY, width, height, category,color) {
+let Upgrade = function (id, x, y, spdX, spdY, width, height, category, color) {
     let upgrade = {
         x: x,
         spdX: spdX,
@@ -99,11 +104,11 @@ let randomGenerateUpgrade = function () {
     let spdX = 0;
     let spdY = 0;
 
-    if(Math.random()<.5){
-        var category='score';
+    if (Math.random() < .5) {
+        var category = 'score';
         var color = 'orange';
-    }else {
-        var category='atkSpd';
+    } else {
+        var category = 'atkSpd';
         var color = 'purple';
     }
 
@@ -141,22 +146,49 @@ let randomGenerateBullet = function () {
 };
 
 document.onmousemove = function (mouse) {
-    let mouseX = mouse.clientX - document.getElementById('ctx').getBoundingClientRect().left;
-    let mouseY = mouse.clientY - document.getElementById('ctx').getBoundingClientRect().top;
+    // let mouseX = mouse.clientX - document.getElementById('ctx').getBoundingClientRect().left;
+    // let mouseY = mouse.clientY - document.getElementById('ctx').getBoundingClientRect().top;
 
-    if (mouseX < player.width / 2)
-        mouseX = player.width / 2;
-    if (mouseX > WIDTH - player.width / 2)
-        mouseX = WIDTH - player.width / 2;
-    if (mouseY < player.height / 2)
-        mouseY = player.height / 2;
-    if (mouseY > HEIGHT - player.height / 2)
-        mouseY = HEIGHT - player.height / 2;
+    // if (mouseX < player.width / 2)
+    //     mouseX = player.width / 2;
+    // if (mouseX > WIDTH - player.width / 2)
+    //     mouseX = WIDTH - player.width / 2;
+    // if (mouseY < player.height / 2)
+    //     mouseY = player.height / 2;
+    // if (mouseY > HEIGHT - player.height / 2)
+    //     mouseY = HEIGHT - player.height / 2;
 
-    player.x = mouseX;
-    player.y = mouseY;
+    // player.x = mouseX;
+    // player.y = mouseY;
 };
 
+document.onkeydown = function(event){
+    if(event.keyCode === 68)        
+            player.pressingRight = true;
+    else if(event.keyCode === 83)   
+            player.pressingDown = true;
+    else if(event.keyCode === 65) 
+            player.pressingLeft = true;
+    else if(event.keyCode === 87) 
+            player.pressingUp = true;
+};
+document.onkeyup = function(event){
+    if(event.keyCode === 68)        
+            player.pressingRight = false;
+    else if(event.keyCode === 83)   
+            player.pressingDown = false;
+    else if(event.keyCode === 65) 
+            player.pressingLeft = false;
+    else if(event.keyCode === 87) 
+            player.pressingUp = false;
+};
+
+let updatePlayerPosition = function(){
+    if(player.pressingRight) player.x+=10;
+    if(player.pressingLeft) player.x-=10;
+    if(player.pressingDown) player.y+=10;
+    if(player.pressingUp) player.y-=10;
+}
 
 let updateEntityPosition = function (something) {
     something.x += something.spdX;
@@ -209,10 +241,10 @@ let startNewGame = function () {
     randomGenerateEnemy();
 };
 
-document.onclick = function(){
-    if (player.attackCounter>25) {
+document.onclick = function () {
+    if (player.attackCounter > 25) {
         randomGenerateBullet();
-        player.attackCounter=0;
+        player.attackCounter = 0;
     };
 };
 
@@ -229,27 +261,27 @@ let update = function () {
         randomGenerateUpgrade();
     };
 
-    player.attackCounter+=player.atkSpd;
-    
+    player.attackCounter += player.atkSpd;
+
 
     for (let key in bulletList) {
         updateEntity(bulletList[key]);
 
         let toRemove = false;
         bulletList[key].timer++;
-        if(bulletList[key].timer > 100) {
-            toRemove=true;
+        if (bulletList[key].timer > 100) {
+            toRemove = true;
         }
 
         for (let key2 in enemyList) {
             let isColliding = testCollisionEntity(bulletList[key], enemyList[key2]);
             if (isColliding) {
-                toRemove=true;
+                toRemove = true;
                 delete enemyList[key2];
                 break;
             }
         }
-        if(toRemove){
+        if (toRemove) {
             delete bulletList[key];
         }
     };
@@ -258,10 +290,10 @@ let update = function () {
         updateEntity(upgradeList[key]);
         let isColliding = testCollisionEntity(player, upgradeList[key]);
         if (isColliding) {
-            if(upgradeList[key].category==='score')
+            if (upgradeList[key].category === 'score')
                 score += 1000;
-            if(upgradeList[key].category==='atkSpd')
-                player.atkSpd+=7;
+            if (upgradeList[key].category === 'atkSpd')
+                player.atkSpd += 7;
             delete upgradeList[key];
         }
     };
@@ -281,6 +313,7 @@ let update = function () {
         console.log("You lost! You survived for " + timeSurvived / 1000 + " sec.");
         startNewGame();
     }
+    updatePlayerPosition();
     drawEntity(player);
     ctx.fillText(player.hp + " Hp", 0, 30);
     ctx.fillText('scores: ' + score, 200, 30);
