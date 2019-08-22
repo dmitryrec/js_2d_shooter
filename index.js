@@ -162,32 +162,41 @@ document.onmousemove = function (mouse) {
     // player.y = mouseY;
 };
 
-document.onkeydown = function(event){
-    if(event.keyCode === 68)        
-            player.pressingRight = true;
-    else if(event.keyCode === 83)   
-            player.pressingDown = true;
-    else if(event.keyCode === 65) 
-            player.pressingLeft = true;
-    else if(event.keyCode === 87) 
-            player.pressingUp = true;
+document.onkeydown = function (event) {
+    if (event.keyCode === 68)
+        player.pressingRight = true;
+    else if (event.keyCode === 83)
+        player.pressingDown = true;
+    else if (event.keyCode === 65)
+        player.pressingLeft = true;
+    else if (event.keyCode === 87)
+        player.pressingUp = true;
 };
-document.onkeyup = function(event){
-    if(event.keyCode === 68)        
-            player.pressingRight = false;
-    else if(event.keyCode === 83)   
-            player.pressingDown = false;
-    else if(event.keyCode === 65) 
-            player.pressingLeft = false;
-    else if(event.keyCode === 87) 
-            player.pressingUp = false;
+document.onkeyup = function (event) {
+    if (event.keyCode === 68)
+        player.pressingRight = false;
+    else if (event.keyCode === 83)
+        player.pressingDown = false;
+    else if (event.keyCode === 65)
+        player.pressingLeft = false;
+    else if (event.keyCode === 87)
+        player.pressingUp = false;
 };
 
-let updatePlayerPosition = function(){
-    if(player.pressingRight) player.x+=10;
-    if(player.pressingLeft) player.x-=10;
-    if(player.pressingDown) player.y+=10;
-    if(player.pressingUp) player.y-=10;
+let updatePlayerPosition = function () {
+    if (player.pressingRight) player.x += 10;
+    if (player.pressingLeft) player.x -= 10;
+    if (player.pressingDown) player.y += 10;
+    if (player.pressingUp) player.y -= 10;
+
+    if (player.x < player.width / 2)
+        player.x = player.width / 2;
+    if (player.x > WIDTH - player.width / 2)
+        player.x = WIDTH - player.width / 2;
+    if (player.y < player.height / 2)
+        player.y = player.height / 2;
+    if (player.y > HEIGHT - player.height / 2)
+        player.y = HEIGHT - player.height / 2;
 }
 
 let updateEntityPosition = function (something) {
