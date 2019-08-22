@@ -26,6 +26,8 @@ let player = {
     pressingUp: false,
     pressingLeft: false,
     pressingRight: false,
+
+    aimAngle: 0,
 };
 
 let enemyList = {};
@@ -139,27 +141,20 @@ let randomGenerateBullet = function () {
     let width = 10;
     let id = Math.random();
 
-    let angle = Math.random() * 360;
+    let angle = player.aimAngle;
     let spdX = Math.cos(angle / 180 * Math.PI) * 5;
     let spdY = Math.sin(angle / 180 * Math.PI) * 5;
     Bullet(id, x, y, spdX, spdY, width, height)
 };
 
-document.onmousemove = function (mouse) {
-    // let mouseX = mouse.clientX - document.getElementById('ctx').getBoundingClientRect().left;
-    // let mouseY = mouse.clientY - document.getElementById('ctx').getBoundingClientRect().top;
+document.onmousemove = function(mouse) {
+    var mouseX = mouse.clientX - document.getElementById('ctx').getBoundingClientRect().left;
+    var mouseY = mouse.clientY - document.getElementById('ctx').getBoundingClientRect().top;
 
-    // if (mouseX < player.width / 2)
-    //     mouseX = player.width / 2;
-    // if (mouseX > WIDTH - player.width / 2)
-    //     mouseX = WIDTH - player.width / 2;
-    // if (mouseY < player.height / 2)
-    //     mouseY = player.height / 2;
-    // if (mouseY > HEIGHT - player.height / 2)
-    //     mouseY = HEIGHT - player.height / 2;
+    mouseX -= player.x;
+    mouseY -= player.y;
 
-    // player.x = mouseX;
-    // player.y = mouseY;
+    player.aimAngle = Math.atan2(mouseY, mouseX) / Math.PI * 180;
 };
 
 document.onkeydown = function (event) {
