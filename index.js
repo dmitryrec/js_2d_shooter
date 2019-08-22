@@ -23,6 +23,7 @@ let player = {
 
 let enemyList = {};
 let upgradeList = {};
+let bulletList = {};
 
 let getDistanceBetweenEntity = function (entity1, entity2) {
     let vx = entity1.x - entity2.x;
@@ -95,6 +96,35 @@ let randomGenerateUpgrade = function () {
     let spdX = 0;
     let spdY = 0;
     Upgrade(id, x, y, spdX, spdY, width, height)
+};
+
+let Bullet = function (id, x, y, spdX, spdY, width, height) {
+    let bullet = {
+        x: x,
+        spdX: spdX,
+        y: y,
+        spdY: spdY,
+        name: 'E',
+        id: id,
+        width: width,
+        height: height,
+        color: 'black',
+    };
+    bulletList[id] = bullet;
+
+};
+
+let randomGenerateBullet = function () {
+    let x = player.x;
+    let y = player.y;
+    let height = 10;
+    let width = 10;
+    let id = Math.random();
+
+    let angle = Math.random()*360;
+    let spdX = Math.cos(angle/180*Math.PI)*5;
+    let spdY = Math.sin(angle/180*Math.PI)*5;
+    Bullet(id, x, y, spdX, spdY, width, height)
 };
 
 document.onmousemove = function (mouse) {
@@ -177,6 +207,14 @@ let update = function () {
     if (frameCount % 75 === 0) {
         randomGenerateUpgrade();
     };
+
+    if (frameCount % 25 === 0) {
+        randomGenerateBullet();
+    };
+
+    for (let key in bulletList) {
+        updateEntity(bulletList[key]);
+    }
 
     for (let key in upgradeList) {
         updateEntity(upgradeList[key]);
