@@ -259,9 +259,11 @@ document.onclick = function (mouse) {
 
 document.oncontextmenu = function (e) {
     if (player.attackCounter > 50) {
-        for (var angle = 0; angle < 360; angle++) {
-            randomGenerateBullet(player, angle)
-        }
+       
+            randomGenerateBullet(player, player.aimAngle-5);
+            randomGenerateBullet(player, player.aimAngle);
+            randomGenerateBullet(player, player.aimAngle+5);
+        
         player.attackCounter = 0;
     };
     e.preventDefault();
