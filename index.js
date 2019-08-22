@@ -19,7 +19,8 @@ let player = {
     width: 20,
     height: 20,
     color: 'green',
-    atkSpd:3,
+    atkSpd:1,
+    attackCounter:0,
 };
 
 let enemyList = {};
@@ -208,6 +209,13 @@ let startNewGame = function () {
     randomGenerateEnemy();
 };
 
+document.onclick = function(){
+    if (player.attackCounter>25) {
+        randomGenerateBullet();
+        player.attackCounter=0;
+    };
+};
+
 let update = function () {
     ctx.clearRect(0, 0, WIDTH, HEIGHT);
     frameCount++;
@@ -221,9 +229,8 @@ let update = function () {
         randomGenerateUpgrade();
     };
 
-    if (frameCount % Math.round(25/player.atkSpd) === 0) {
-        randomGenerateBullet();
-    };
+    player.attackCounter+=player.atkSpd;
+    
 
     for (let key in bulletList) {
         updateEntity(bulletList[key]);
