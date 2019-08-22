@@ -19,6 +19,7 @@ let player = {
     width: 20,
     height: 20,
     color: 'green',
+    atkSpd:3,
 };
 
 let enemyList = {};
@@ -98,10 +99,10 @@ let randomGenerateUpgrade = function () {
     let spdY = 0;
 
     if(Math.random()<.5){
-        var category='low';
+        var category='score';
         var color = 'orange';
     }else {
-        var category='high';
+        var category='atkSpd';
         var color = 'purple';
     }
 
@@ -220,7 +221,7 @@ let update = function () {
         randomGenerateUpgrade();
     };
 
-    if (frameCount % 25 === 0) {
+    if (frameCount % Math.round(25/player.atkSpd) === 0) {
         randomGenerateBullet();
     };
 
@@ -250,10 +251,10 @@ let update = function () {
         updateEntity(upgradeList[key]);
         let isColliding = testCollisionEntity(player, upgradeList[key]);
         if (isColliding) {
-            if(upgradeList[key].category==='low')
+            if(upgradeList[key].category==='score')
                 score += 1000;
-            if(upgradeList[key].category==='high')
-                score += 10000;
+            if(upgradeList[key].category==='atkSpd')
+                player.atkSpd+=7;
             delete upgradeList[key];
         }
     };
