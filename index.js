@@ -10,7 +10,7 @@ let frameCount = 0;
 let score = 0;
 let player;
 
-createPlayer = function(){
+let createPlayer = function(){
 	player = {
 		type:'player',
 		x:50,
@@ -38,13 +38,13 @@ let enemyList = {};
 let upgradeList = {};
 let bulletList = {};
 
-getDistanceBetweenEntity = function (entity1,entity2){	
+let getDistanceBetweenEntity = function (entity1,entity2){	
 	let vx = entity1.x - entity2.x;
 	let vy = entity1.y - entity2.y;
 	return Math.sqrt(vx*vx+vy*vy);
 }
 
-testCollisionEntity = function (entity1,entity2){	
+let testCollisionEntity = function (entity1,entity2){	
 	let rect1 = {
 		x:entity1.x-entity1.width/2,
 		y:entity1.y-entity1.height/2,
@@ -61,7 +61,7 @@ testCollisionEntity = function (entity1,entity2){
 	
 }
 
-Enemy = function(id,x,y,spdX,spdY,width,height){
+let Enemy = function(id,x,y,spdX,spdY,width,height){
 	let enemy3 = {
 		type:'enemy',
 		x:x,
@@ -81,7 +81,7 @@ Enemy = function(id,x,y,spdX,spdY,width,height){
 	
 }
 
-randomlyGenerateEnemy = function(){
+let randomlyGenerateEnemy = function(){
 	
 	let x = Math.random()*WIDTH;
 	let y = Math.random()*HEIGHT;
@@ -94,7 +94,7 @@ randomlyGenerateEnemy = function(){
 	
 }
 
-Upgrade = function (id,x,y,spdX,spdY,width,height,category,color){
+let Upgrade = function (id,x,y,spdX,spdY,width,height,category,color){
 	let asd = {
 		type:'upgrade',
 		x:x,
@@ -112,7 +112,7 @@ Upgrade = function (id,x,y,spdX,spdY,width,height,category,color){
 	upgradeList[id] = asd;
 }
 
-randomlyGenerateUpgrade = function(){
+let randomlyGenerateUpgrade = function(){
 	
 	let x = Math.random()*WIDTH;
 	let y = Math.random()*HEIGHT;
@@ -133,7 +133,7 @@ randomlyGenerateUpgrade = function(){
 	Upgrade(id,x,y,spdX,spdY,width,height,category,color);
 }
 
-Bullet = function (id,x,y,spdX,spdY,width,height){
+let Bullet = function (id,x,y,spdX,spdY,width,height){
 	let asd = {
 		type:'bullet',
 		x:x,
@@ -151,7 +151,7 @@ Bullet = function (id,x,y,spdX,spdY,width,height){
 	bulletList[id] = asd;
 }
 
-generateBullet = function(actor,aimOverwrite){
+let generateBullet = function(actor,aimOverwrite){
 	
 	let x = player.x;
 	let y = player.y;
@@ -169,12 +169,12 @@ generateBullet = function(actor,aimOverwrite){
 	Bullet(id,x,y,spdX,spdY,width,height);
 }
 
-updateEntity = function(entity){
+let updateEntity = function(entity){
 	updateEntityPosition(entity);
 	drawEntity(entity);
 }
 
-updateEntityPosition = function(entity){
+let updateEntityPosition = function(entity){
 	if(entity.type === 'player'){
 		if(player.pressingRight)
 			player.x += 10;
@@ -208,14 +208,14 @@ updateEntityPosition = function(entity){
 	}
 }
 
-testCollisionRectRect = function(rect1,rect2){
+let testCollisionRectRect = function(rect1,rect2){
 	return rect1.x <= rect2.x+rect2.width 
 		&& rect2.x <= rect1.x+rect1.width
 		&& rect1.y <= rect2.y + rect2.height
 		&& rect2.y <= rect1.y + rect1.height;
 }
 
-drawEntity = function(entity){
+let drawEntity = function(entity){
 	ctx.save();
 	ctx.fillStyle = entity.color;
 	ctx.fillRect(entity.x-entity.width/2,entity.y-entity.height/2,entity.width,entity.height);
@@ -226,7 +226,7 @@ document.onclick = function(mouse){
 	performAttack(player);
 }
 
-performAttack = function(actor){
+let performAttack = function(actor){
 	if(actor.attackCounter > 25){	
 		actor.attackCounter = 0;
 		generateBullet(actor);
@@ -239,7 +239,7 @@ document.oncontextmenu = function(mouse){
 	mouse.preventDefault();
 }
 
-performSpecialAttack = function(actor){
+let performSpecialAttack = function(actor){
 	if(actor.attackCounter > 50){	
 		actor.attackCounter = 0;
 		/*
@@ -286,7 +286,7 @@ document.onkeyup = function(event){
 }
 
 
-update = function(){
+let update = function(){
 	ctx.clearRect(0,0,WIDTH,HEIGHT);
 	frameCount++;
 	score++;
@@ -352,7 +352,7 @@ update = function(){
 	ctx.fillText('Score: ' + score,200,30);
 }
 
-startNewGame = function(){
+let startNewGame = function(){
 	player.hp = 10;
 	timeWhenGameStarted = Date.now();
 	frameCount = 0;
